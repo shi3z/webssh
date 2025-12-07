@@ -14,6 +14,8 @@ import sys
 import termios
 from pathlib import Path
 
+import qrcode
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -213,17 +215,29 @@ def get_local_ip():
         return "localhost"
 
 
+def print_qr_code(url: str):
+    """Print QR code to terminal."""
+    qr = qrcode.QRCode(border=1)
+    qr.add_data(url)
+    qr.make(fit=True)
+    matrix = qr.get_matrix()
+    for row in matrix:
+        print("  " + "".join("██" if cell else "  " for cell in row))
+
+
 if __name__ == "__main__":
     import uvicorn
     port = config.get("port", 8765)
     local_ip = get_local_ip()
+    access_url = f"http://{local_ip}:{port}/?token={AUTH_TOKEN}"
 
     print("\n" + "=" * 50)
     print("  Nagi - Touch-friendly Web Terminal")
     print("=" * 50)
-    print(f"\n  Access URL (copy this to your browser):\n")
-    print(f"    http://{local_ip}:{port}/?token={AUTH_TOKEN}")
-    print(f"\n  Local: http://localhost:{port}/?token={AUTH_TOKEN}")
+    print(f"\n  Access URL:\n")
+    print(f"    {access_url}")
+    print(f"\n  Scan QR code to connect:\n")
+    print_qr_code(access_url)
     print("\n" + "=" * 50 + "\n")
 
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")
