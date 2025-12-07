@@ -203,16 +203,9 @@ async def websocket_terminal(websocket: WebSocket, token: str = Query(None)):
                 pass
 
 
-def get_local_ip():
-    """Get local IP address."""
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception:
-        return "localhost"
+def get_hostname():
+    """Get hostname for URL."""
+    return socket.gethostname()
 
 
 def print_qr_code(url: str):
@@ -228,8 +221,8 @@ def print_qr_code(url: str):
 if __name__ == "__main__":
     import uvicorn
     port = config.get("port", 8765)
-    local_ip = get_local_ip()
-    access_url = f"http://{local_ip}:{port}/?token={AUTH_TOKEN}"
+    hostname = get_hostname()
+    access_url = f"http://{hostname}:{port}/?token={AUTH_TOKEN}"
 
     print("\n" + "=" * 50)
     print("  Nagi - Touch-friendly Web Terminal")
