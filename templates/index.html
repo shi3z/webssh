@@ -715,6 +715,23 @@
                 connect();
             }
         });
+
+        // Close panels when tapping outside
+        document.addEventListener('click', (e) => {
+            // Close extra panel if clicking outside of it
+            if (extraPanel && extraPanel.classList.contains('visible')) {
+                if (!extraPanel.contains(e.target) && e.target !== moreBtn) {
+                    extraPanel.classList.remove('visible');
+                    if (moreBtn) moreBtn.textContent = 'More';
+                }
+            }
+            // Close tmux panel if clicking outside of it
+            if (tmuxPanel && tmuxPanel.classList.contains('visible')) {
+                if (!tmuxPanel.contains(e.target) && e.target !== tmuxBtn && e.target !== tmuxBtn2) {
+                    tmuxPanel.classList.remove('visible');
+                }
+            }
+        });
     </script>
 </body>
 </html>
