@@ -44,11 +44,16 @@ if (!python) {
 
 console.log(`Found ${python}`);
 
+// Check if venv already exists
+const venvExists = fs.existsSync(venvDir);
+
 // Create virtual environment and install dependencies
 if (hasUv()) {
   console.log('Using uv for faster installation...');
   try {
-    execSync(`uv venv "${venvDir}"`, { cwd: pythonDir, stdio: 'inherit' });
+    if (!venvExists) {
+      execSync(`uv venv "${venvDir}"`, { cwd: pythonDir, stdio: 'inherit' });
+    }
     execSync(`uv pip install --python "${venvDir}" fastapi uvicorn websockets qrcode`, {
       cwd: pythonDir,
       stdio: 'inherit'
@@ -60,8 +65,10 @@ if (hasUv()) {
 } else {
   console.log('Using pip for installation...');
   try {
-    // Create venv
-    execSync(`${python} -m venv "${venvDir}"`, { cwd: pythonDir, stdio: 'inherit' });
+    // Create venv if it doesn't exist
+    if (!venvExists) {
+      execSync(`${python} -m venv "${venvDir}"`, { cwd: pythonDir, stdio: 'inherit' });
+    }
 
     // Determine pip path
     const isWindows = process.platform === 'win32';
@@ -69,7 +76,7 @@ if (hasUv()) {
       ? path.join(venvDir, 'Scripts', 'pip.exe')
       : path.join(venvDir, 'bin', 'pip');
 
-    // Install dependencies
+    // Install dependencies (always run to ensure all packages are installed)
     execSync(`"${pipPath}" install fastapi uvicorn websockets qrcode`, {
       cwd: pythonDir,
       stdio: 'inherit'
