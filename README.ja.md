@@ -4,9 +4,7 @@
 
 tmuxやClaude Codeなどのフルスクリーンアプリケーションに対応。
 
-<img src="images/image1.png" width="400"> <img src="images/iPhone.png" width="200">
-
-<img src="images/image2.png" width="400">
+<img src="images/mainvisual.png" width="600">
 
 ## 特徴
 
