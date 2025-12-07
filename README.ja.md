@@ -1,4 +1,4 @@
-# WebSSH
+# Nagi
 
 iOS/iPad向けタッチフレンドリーなWebベースターミナル。tmuxやClaude Codeなどのフルスクリーンアプリケーションに対応。
 
@@ -16,14 +16,14 @@ iOS/iPad向けタッチフレンドリーなWebベースターミナル。tmux�
 ### npm (推奨)
 
 ```bash
-npm install -g webssh-terminal
+npm install -g nagi-terminal
 ```
 
 ### 手動インストール
 
 ```bash
-git clone https://github.com/shi3z/webssh.git
-cd webssh
+git clone https://github.com/shi3z/nagi.git
+cd nagi
 uv sync
 ```
 
@@ -32,9 +32,9 @@ uv sync
 ### npm版
 
 ```bash
-webssh
-webssh -p 8080  # ポート指定
-webssh -c /path/to/config.json  # 設定ファイル指定
+nagi
+nagi -p 8080  # ポート指定
+nagi -c /path/to/config.json  # 設定ファイル指定
 ```
 
 ### 手動版

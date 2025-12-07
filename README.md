@@ -1,4 +1,4 @@
-# WebSSH
+# Nagi
 
 Touch-friendly web-based terminal for iOS/iPad. Supports fullscreen applications like tmux and Claude Code.
 
@@ -18,14 +18,14 @@ Touch-friendly web-based terminal for iOS/iPad. Supports fullscreen applications
 ### npm (Recommended)
 
 ```bash
-npm install -g webssh-terminal
+npm install -g nagi-terminal
 ```
 
 ### Manual Installation
 
 ```bash
-git clone https://github.com/shi3z/webssh.git
-cd webssh
+git clone https://github.com/shi3z/nagi.git
+cd nagi
 uv sync
 ```
 
@@ -34,9 +34,9 @@ uv sync
 ### npm
 
 ```bash
-webssh
-webssh -p 8080  # Custom port
-webssh -c /path/to/config.json  # Custom config file
+nagi
+nagi -p 8080  # Custom port
+nagi -c /path/to/config.json  # Custom config file
 ```
 
 ### Manual

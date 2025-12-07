@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""WebSSH - Web-based terminal for iOS/iPad with touch-friendly controls."""
+"""Nagi - Web-based terminal for iOS/iPad with touch-friendly controls."""
 
 import asyncio
 import fcntl
@@ -23,7 +23,7 @@ else:
     BASE_DIR = Path(__file__).parent.resolve()
 
 # Load config
-CONFIG_PATH = Path(os.environ.get("WEBSSH_CONFIG", "")) if os.environ.get("WEBSSH_CONFIG") else BASE_DIR / "config.json"
+CONFIG_PATH = Path(os.environ.get("NAGI_CONFIG", "")) if os.environ.get("NAGI_CONFIG") else BASE_DIR / "config.json"
 DEFAULT_CONFIG = {
     "startup_command": "tmux a || tmux new",
     "shell": "/bin/bash",
@@ -44,10 +44,10 @@ def load_config():
 config = load_config()
 
 # Override port from environment variable
-if os.environ.get("WEBSSH_PORT"):
-    config["port"] = int(os.environ["WEBSSH_PORT"])
+if os.environ.get("NAGI_PORT"):
+    config["port"] = int(os.environ["NAGI_PORT"])
 
-app = FastAPI(title="WebSSH")
+app = FastAPI(title="Nagi")
 
 # Serve static files
 static_dir = BASE_DIR / "static"

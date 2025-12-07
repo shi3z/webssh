@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""WebSSH - Web-based terminal for iOS/iPad with touch-friendly controls."""
+"""Nagi - Web-based terminal for iOS/iPad with touch-friendly controls."""
 
 import asyncio
 import fcntl
@@ -43,7 +43,7 @@ def load_config():
 
 config = load_config()
 
-app = FastAPI(title="WebSSH")
+app = FastAPI(title="Nagi")
 
 # Serve static files
 static_dir = BASE_DIR / "static"

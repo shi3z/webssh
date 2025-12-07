@@ -7,7 +7,7 @@ const fs = require('fs');
 const pythonDir = path.join(__dirname, '..', 'python');
 const venvDir = path.join(pythonDir, '.venv');
 
-console.log('Setting up WebSSH Python environment...');
+console.log('Setting up Nagi Python environment...');
 
 // Check for Python 3
 function findPython() {
@@ -81,5 +81,5 @@ if (hasUv()) {
 }
 
 console.log('');
-console.log('WebSSH installation complete!');
-console.log('Run "webssh" to start the server.');
+console.log('Nagi installation complete!');
+console.log('Run "nagi" to start the server.');

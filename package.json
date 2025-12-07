@@ -1,18 +1,18 @@
 {
-  "name": "webssh-terminal",
+  "name": "nagi-terminal",
   "version": "1.0.0",
   "description": "Touch-friendly web-based terminal for iOS/iPad with tmux support",
   "main": "index.js",
   "bin": {
-    "webssh": "./bin/webssh.js"
+    "nagi": "./bin/nagi.js"
   },
   "scripts": {
-    "start": "node bin/webssh.js",
+    "start": "node bin/nagi.js",
     "postinstall": "node scripts/postinstall.js"
   },
   "keywords": [
     "terminal",
-    "webssh",
+    "nagi",
     "ssh",
     "tmux",
     "xterm",
@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shi3z/webssh.git"
+    "url": "https://github.com/shi3z/nagi.git"
   },
   "engines": {
     "node": ">=14.0.0"

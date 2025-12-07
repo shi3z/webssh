@@ -34,9 +34,9 @@ for (let i = 0; i < args.length; i++) {
     i++;
   } else if (args[i] === '-h' || args[i] === '--help') {
     console.log(`
-WebSSH - Touch-friendly web-based terminal
+Nagi - Touch-friendly web-based terminal
 
-Usage: webssh [options]
+Usage: nagi [options]
 
 Options:
   -p, --port <port>    Port to listen on (default: 8765)
@@ -44,9 +44,9 @@ Options:
   -h, --help           Show this help message
 
 Example:
-  webssh
-  webssh -p 8080
-  webssh -c /path/to/config.json
+  nagi
+  nagi -p 8080
+  nagi -c /path/to/config.json
 `);
     process.exit(0);
   }
@@ -55,13 +55,13 @@ Example:
 // Set environment variables for port
 const env = { ...process.env };
 if (port !== 8765) {
-  env.WEBSSH_PORT = port.toString();
+  env.NAGI_PORT = port.toString();
 }
 if (configPath) {
-  env.WEBSSH_CONFIG = configPath;
+  env.NAGI_CONFIG = configPath;
 }
 
-console.log(`Starting WebSSH on port ${port}...`);
+console.log(`Starting Nagi on port ${port}...`);
 console.log(`Open http://localhost:${port}/ in your browser`);
 
 // Start the Python server
@@ -72,7 +72,7 @@ const proc = spawn(pythonExe, [mainPy], {
 });
 
 proc.on('error', (err) => {
-  console.error('Failed to start WebSSH:', err.message);
+  console.error('Failed to start Nagi:', err.message);
   process.exit(1);
 });
 
