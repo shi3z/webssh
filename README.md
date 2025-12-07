@@ -13,6 +13,14 @@ iOS/iPad向けタッチフレンドリーなWebベースターミナル。tmux�
 
 ## インストール
 
+### npm (推奨)
+
+```bash
+npm install -g webssh-terminal
+```
+
+### 手動インストール
+
 ```bash
 git clone https://github.com/shi3z/webssh.git
 cd webssh
@@ -20,6 +28,16 @@ uv sync
 ```
 
 ## 使い方
+
+### npm版
+
+```bash
+webssh
+webssh -p 8080  # ポート指定
+webssh -c /path/to/config.json  # 設定ファイル指定
+```
+
+### 手動版
 
 ```bash
 uv run python main.py

@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .venv/
+python/.venv/
 *.egg-info/
 dist/
 build/
@@ -10,3 +11,5 @@ build/
 .DS_Store
 *.log
 .claude/
+node_modules/
+package-lock.json

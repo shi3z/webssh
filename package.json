@@ -1,0 +1,38 @@
+{
+  "name": "webssh-terminal",
+  "version": "1.0.0",
+  "description": "Touch-friendly web-based terminal for iOS/iPad with tmux support",
+  "main": "index.js",
+  "bin": {
+    "webssh": "./bin/webssh.js"
+  },
+  "scripts": {
+    "start": "node bin/webssh.js",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "keywords": [
+    "terminal",
+    "webssh",
+    "ssh",
+    "tmux",
+    "xterm",
+    "ios",
+    "ipad",
+    "touch"
+  ],
+  "author": "shi3z",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shi3z/webssh.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "python/",
+    "README.md"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+    "startup_command": "tmux a || tmux new",
+    "shell": "/bin/bash",
+    "port": 8765
+}
