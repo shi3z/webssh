@@ -148,6 +148,18 @@
             text-align: center;
         }
 
+        .extra-panel {
+            display: none;
+            background: #0a0a1a;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+
+        .extra-panel.visible {
+            display: block;
+        }
+
         .tmux-panel {
             display: none;
             background: #0a0a1a;
@@ -280,6 +292,52 @@
             max-height: 60px;
             overflow: auto;
         }
+
+        /* iPhone compact mode */
+        @media (max-width: 480px) {
+            .iphone-hide {
+                display: none !important;
+            }
+
+            .arrow-pad {
+                grid-template-columns: repeat(3, 38px);
+                grid-template-rows: repeat(2, 38px);
+            }
+
+            .btn.arrow {
+                min-width: 38px;
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            .enter-btn {
+                min-width: 60px !important;
+                padding: 15px 12px !important;
+            }
+
+            .btn {
+                padding: 10px 12px;
+                font-size: 13px;
+                min-width: 44px;
+            }
+
+            .control-panel {
+                padding: 6px;
+            }
+
+            .iphone-essential {
+                display: flex !important;
+                gap: 4px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (min-width: 481px) {
+            .iphone-only {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -307,16 +365,21 @@
                     <button class="btn arrow" id="rightBtn">→</button>
                 </div>
                 <div class="other-keys">
-                    <div class="button-row">
+                    <!-- iPhone: essential keys only -->
+                    <div class="button-row iphone-essential">
+                        <button class="btn" id="escBtn">Esc</button>
+                        <button class="btn wide" id="textInputBtn">Text</button>
+                        <button class="btn" id="bsBtn">BS</button>
+                        <button class="btn iphone-only" id="moreBtn">More</button>
+                    </div>
+                    <!-- Desktop: full keys -->
+                    <div class="button-row iphone-hide">
                         <button class="btn modifier" id="ctrlBtn">Ctrl</button>
                         <button class="btn modifier" id="altBtn">Alt</button>
-                        <button class="btn" id="escBtn">Esc</button>
                         <button class="btn" id="tabBtn">Tab</button>
-                        <button class="btn wide" id="textInputBtn">Text</button>
                         <button class="btn" id="delBtn">Del</button>
-                        <button class="btn" id="bsBtn">BS</button>
                     </div>
-                    <div class="button-row">
+                    <div class="button-row iphone-hide">
                         <button class="btn" id="homeBtn">Home</button>
                         <button class="btn" id="endBtn">End</button>
                         <button class="btn" id="pgupBtn">PgUp</button>
@@ -325,13 +388,35 @@
                         <button class="btn" id="ctrlDBtn">^D</button>
                         <button class="btn" id="ctrlZBtn">^Z</button>
                     </div>
-                    <div class="button-row">
+                    <div class="button-row iphone-hide">
                         <button class="btn wide" id="tmuxBtn">tmux</button>
                         <button class="btn quick-cmd" id="lsBtn">ls</button>
                         <button class="btn quick-cmd" id="cdBtn">cd ..</button>
                     </div>
                 </div>
                 <button class="btn enter-btn" id="enterBtn">Enter</button>
+            </div>
+
+            <!-- iPhone: extra keys panel -->
+            <div class="extra-panel" id="extraPanel">
+                <div class="button-row">
+                    <button class="btn modifier" id="ctrlBtn2">Ctrl</button>
+                    <button class="btn modifier" id="altBtn2">Alt</button>
+                    <button class="btn" id="tabBtn2">Tab</button>
+                    <button class="btn" id="delBtn2">Del</button>
+                </div>
+                <div class="button-row" style="margin-top: 6px;">
+                    <button class="btn" id="homeBtn2">Home</button>
+                    <button class="btn" id="endBtn2">End</button>
+                    <button class="btn" id="pgupBtn2">PgUp</button>
+                    <button class="btn" id="pgdnBtn2">PgDn</button>
+                </div>
+                <div class="button-row" style="margin-top: 6px;">
+                    <button class="btn" id="ctrlCBtn2">^C</button>
+                    <button class="btn" id="ctrlDBtn2">^D</button>
+                    <button class="btn" id="ctrlZBtn2">^Z</button>
+                    <button class="btn wide" id="tmuxBtn2">tmux</button>
+                </div>
             </div>
 
             <div class="tmux-panel" id="tmuxPanel">
@@ -490,10 +575,14 @@
 
         const ctrlBtn = document.getElementById('ctrlBtn');
         const altBtn = document.getElementById('altBtn');
+        const ctrlBtn2 = document.getElementById('ctrlBtn2');
+        const altBtn2 = document.getElementById('altBtn2');
 
         function updateModifiers() {
-            ctrlBtn.classList.toggle('active', ctrlActive);
-            altBtn.classList.toggle('active', altActive);
+            if (ctrlBtn) ctrlBtn.classList.toggle('active', ctrlActive);
+            if (altBtn) altBtn.classList.toggle('active', altActive);
+            if (ctrlBtn2) ctrlBtn2.classList.toggle('active', ctrlActive);
+            if (altBtn2) altBtn2.classList.toggle('active', altActive);
         }
 
         function clearModifiers() {
@@ -502,8 +591,10 @@
             updateModifiers();
         }
 
-        ctrlBtn.addEventListener('click', () => { ctrlActive = !ctrlActive; updateModifiers(); });
-        altBtn.addEventListener('click', () => { altActive = !altActive; updateModifiers(); });
+        if (ctrlBtn) ctrlBtn.addEventListener('click', () => { ctrlActive = !ctrlActive; updateModifiers(); });
+        if (altBtn) altBtn.addEventListener('click', () => { altActive = !altActive; updateModifiers(); });
+        if (ctrlBtn2) ctrlBtn2.addEventListener('click', () => { ctrlActive = !ctrlActive; updateModifiers(); });
+        if (altBtn2) altBtn2.addEventListener('click', () => { altActive = !altActive; updateModifiers(); });
 
         function sendKey(key, clearMods = true) {
             let data = key;
@@ -520,28 +611,78 @@
             if (clearMods) clearModifiers();
         }
 
+        // Essential keys (both modes)
         document.getElementById('escBtn').addEventListener('click', () => send('\x1b'));
-        document.getElementById('tabBtn').addEventListener('click', () => sendKey('\t'));
         document.getElementById('enterBtn').addEventListener('click', () => send('\r'));
         document.getElementById('upBtn').addEventListener('click', () => send('\x1b[A'));
         document.getElementById('downBtn').addEventListener('click', () => send('\x1b[B'));
         document.getElementById('rightBtn').addEventListener('click', () => send('\x1b[C'));
         document.getElementById('leftBtn').addEventListener('click', () => send('\x1b[D'));
-        document.getElementById('homeBtn').addEventListener('click', () => send('\x1b[H'));
-        document.getElementById('endBtn').addEventListener('click', () => send('\x1b[F'));
-        document.getElementById('pgupBtn').addEventListener('click', () => send('\x1b[5~'));
-        document.getElementById('pgdnBtn').addEventListener('click', () => send('\x1b[6~'));
-        document.getElementById('delBtn').addEventListener('click', () => send('\x1b[3~'));
         document.getElementById('bsBtn').addEventListener('click', () => send('\x7f'));
-        document.getElementById('ctrlCBtn').addEventListener('click', () => send('\x03'));
-        document.getElementById('ctrlDBtn').addEventListener('click', () => send('\x04'));
-        document.getElementById('ctrlZBtn').addEventListener('click', () => send('\x1a'));
-        document.getElementById('lsBtn').addEventListener('click', () => send('ls\n'));
-        document.getElementById('cdBtn').addEventListener('click', () => send('cd ..\n'));
 
+        // Desktop keys
+        const tabBtn = document.getElementById('tabBtn');
+        const homeBtn = document.getElementById('homeBtn');
+        const endBtn = document.getElementById('endBtn');
+        const pgupBtn = document.getElementById('pgupBtn');
+        const pgdnBtn = document.getElementById('pgdnBtn');
+        const delBtn = document.getElementById('delBtn');
+        const ctrlCBtn = document.getElementById('ctrlCBtn');
+        const ctrlDBtn = document.getElementById('ctrlDBtn');
+        const ctrlZBtn = document.getElementById('ctrlZBtn');
+        const lsBtn = document.getElementById('lsBtn');
+        const cdBtn = document.getElementById('cdBtn');
+
+        if (tabBtn) tabBtn.addEventListener('click', () => sendKey('\t'));
+        if (homeBtn) homeBtn.addEventListener('click', () => send('\x1b[H'));
+        if (endBtn) endBtn.addEventListener('click', () => send('\x1b[F'));
+        if (pgupBtn) pgupBtn.addEventListener('click', () => send('\x1b[5~'));
+        if (pgdnBtn) pgdnBtn.addEventListener('click', () => send('\x1b[6~'));
+        if (delBtn) delBtn.addEventListener('click', () => send('\x1b[3~'));
+        if (ctrlCBtn) ctrlCBtn.addEventListener('click', () => send('\x03'));
+        if (ctrlDBtn) ctrlDBtn.addEventListener('click', () => send('\x04'));
+        if (ctrlZBtn) ctrlZBtn.addEventListener('click', () => send('\x1a'));
+        if (lsBtn) lsBtn.addEventListener('click', () => send('ls\n'));
+        if (cdBtn) cdBtn.addEventListener('click', () => send('cd ..\n'));
+
+        // iPhone extra panel keys
+        const tabBtn2 = document.getElementById('tabBtn2');
+        const homeBtn2 = document.getElementById('homeBtn2');
+        const endBtn2 = document.getElementById('endBtn2');
+        const pgupBtn2 = document.getElementById('pgupBtn2');
+        const pgdnBtn2 = document.getElementById('pgdnBtn2');
+        const delBtn2 = document.getElementById('delBtn2');
+        const ctrlCBtn2 = document.getElementById('ctrlCBtn2');
+        const ctrlDBtn2 = document.getElementById('ctrlDBtn2');
+        const ctrlZBtn2 = document.getElementById('ctrlZBtn2');
+
+        if (tabBtn2) tabBtn2.addEventListener('click', () => sendKey('\t'));
+        if (homeBtn2) homeBtn2.addEventListener('click', () => send('\x1b[H'));
+        if (endBtn2) endBtn2.addEventListener('click', () => send('\x1b[F'));
+        if (pgupBtn2) pgupBtn2.addEventListener('click', () => send('\x1b[5~'));
+        if (pgdnBtn2) pgdnBtn2.addEventListener('click', () => send('\x1b[6~'));
+        if (delBtn2) delBtn2.addEventListener('click', () => send('\x1b[3~'));
+        if (ctrlCBtn2) ctrlCBtn2.addEventListener('click', () => send('\x03'));
+        if (ctrlDBtn2) ctrlDBtn2.addEventListener('click', () => send('\x04'));
+        if (ctrlZBtn2) ctrlZBtn2.addEventListener('click', () => send('\x1a'));
+
+        // More button for iPhone
+        const moreBtn = document.getElementById('moreBtn');
+        const extraPanel = document.getElementById('extraPanel');
+        if (moreBtn) {
+            moreBtn.addEventListener('click', () => {
+                extraPanel.classList.toggle('visible');
+                moreBtn.textContent = extraPanel.classList.contains('visible') ? 'Less' : 'More';
+            });
+        }
+
+        // tmux buttons
         const tmuxBtn = document.getElementById('tmuxBtn');
+        const tmuxBtn2 = document.getElementById('tmuxBtn2');
         const tmuxPanel = document.getElementById('tmuxPanel');
-        tmuxBtn.addEventListener('click', () => tmuxPanel.classList.toggle('visible'));
+
+        if (tmuxBtn) tmuxBtn.addEventListener('click', () => tmuxPanel.classList.toggle('visible'));
+        if (tmuxBtn2) tmuxBtn2.addEventListener('click', () => tmuxPanel.classList.toggle('visible'));
 
         document.querySelectorAll('[data-tmux]').forEach(btn => {
             btn.addEventListener('click', () => send('\x02' + btn.dataset.tmux));
