@@ -48,6 +48,50 @@
             border-top: 1px solid #0f3460;
         }
 
+        .control-main {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .enter-btn {
+            min-width: 70px !important;
+            font-size: 16px !important;
+            padding: 20px 16px !important;
+            align-self: stretch;
+        }
+
+        .arrow-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 44px);
+            grid-template-rows: repeat(2, 44px);
+            gap: 2px;
+        }
+
+        .arrow-pad .btn:nth-child(1) { grid-column: 2; grid-row: 1; }
+        .arrow-pad .btn:nth-child(2) { grid-column: 1; grid-row: 2; }
+        .arrow-pad .btn:nth-child(3) { grid-column: 2; grid-row: 2; }
+        .arrow-pad .btn:nth-child(4) { grid-column: 3; grid-row: 2; }
+
+        .keys-area {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .other-keys {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
         .button-row {
             display: flex;
             gap: 4px;
@@ -255,33 +299,39 @@
         </div>
 
         <div class="control-panel">
-            <div class="button-row">
-                <button class="btn modifier" id="ctrlBtn">Ctrl</button>
-                <button class="btn modifier" id="altBtn">Alt</button>
-                <button class="btn" id="escBtn">Esc</button>
-                <button class="btn" id="tabBtn">Tab</button>
-                <button class="btn wide" id="enterBtn">Enter</button>
-                <button class="btn wide" id="textInputBtn">Text</button>
-            </div>
-
-            <div class="button-row">
-                <button class="btn arrow" id="upBtn">↑</button>
-                <button class="btn arrow" id="downBtn">↓</button>
-                <button class="btn arrow" id="leftBtn">←</button>
-                <button class="btn arrow" id="rightBtn">→</button>
-                <button class="btn" id="homeBtn">Home</button>
-                <button class="btn" id="endBtn">End</button>
-                <button class="btn" id="pgupBtn">PgUp</button>
-                <button class="btn" id="pgdnBtn">PgDn</button>
-            </div>
-
-            <div class="button-row">
-                <button class="btn wide" id="tmuxBtn">tmux</button>
-                <button class="btn quick-cmd" id="lsBtn">ls</button>
-                <button class="btn quick-cmd" id="cdBtn">cd ..</button>
-                <button class="btn" id="ctrlCBtn">^C</button>
-                <button class="btn" id="ctrlDBtn">^D</button>
-                <button class="btn" id="ctrlZBtn">^Z</button>
+            <div class="control-main">
+                <div class="arrow-pad">
+                    <button class="btn arrow" id="upBtn">↑</button>
+                    <button class="btn arrow" id="leftBtn">←</button>
+                    <button class="btn arrow" id="downBtn">↓</button>
+                    <button class="btn arrow" id="rightBtn">→</button>
+                </div>
+                <div class="other-keys">
+                    <div class="button-row">
+                        <button class="btn modifier" id="ctrlBtn">Ctrl</button>
+                        <button class="btn modifier" id="altBtn">Alt</button>
+                        <button class="btn" id="escBtn">Esc</button>
+                        <button class="btn" id="tabBtn">Tab</button>
+                        <button class="btn wide" id="textInputBtn">Text</button>
+                        <button class="btn" id="delBtn">Del</button>
+                        <button class="btn" id="bsBtn">BS</button>
+                    </div>
+                    <div class="button-row">
+                        <button class="btn" id="homeBtn">Home</button>
+                        <button class="btn" id="endBtn">End</button>
+                        <button class="btn" id="pgupBtn">PgUp</button>
+                        <button class="btn" id="pgdnBtn">PgDn</button>
+                        <button class="btn" id="ctrlCBtn">^C</button>
+                        <button class="btn" id="ctrlDBtn">^D</button>
+                        <button class="btn" id="ctrlZBtn">^Z</button>
+                    </div>
+                    <div class="button-row">
+                        <button class="btn wide" id="tmuxBtn">tmux</button>
+                        <button class="btn quick-cmd" id="lsBtn">ls</button>
+                        <button class="btn quick-cmd" id="cdBtn">cd ..</button>
+                    </div>
+                </div>
+                <button class="btn enter-btn" id="enterBtn">Enter</button>
             </div>
 
             <div class="tmux-panel" id="tmuxPanel">
@@ -481,6 +531,8 @@
         document.getElementById('endBtn').addEventListener('click', () => send('\x1b[F'));
         document.getElementById('pgupBtn').addEventListener('click', () => send('\x1b[5~'));
         document.getElementById('pgdnBtn').addEventListener('click', () => send('\x1b[6~'));
+        document.getElementById('delBtn').addEventListener('click', () => send('\x1b[3~'));
+        document.getElementById('bsBtn').addEventListener('click', () => send('\x7f'));
         document.getElementById('ctrlCBtn').addEventListener('click', () => send('\x03'));
         document.getElementById('ctrlDBtn').addEventListener('click', () => send('\x04'));
         document.getElementById('ctrlZBtn').addEventListener('click', () => send('\x1a'));

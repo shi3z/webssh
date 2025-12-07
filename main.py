@@ -8,6 +8,7 @@ import os
 import pty
 import struct
 import subprocess
+import sys
 import termios
 from pathlib import Path
 
@@ -15,8 +16,11 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-# Base directory for resolving paths
-BASE_DIR = Path(__file__).parent.resolve()
+# Base directory for resolving paths (PyInstaller compatible)
+if getattr(sys, 'frozen', False):
+    BASE_DIR = Path(sys._MEIPASS)
+else:
+    BASE_DIR = Path(__file__).parent.resolve()
 
 # Load config
 CONFIG_PATH = BASE_DIR / "config.json"

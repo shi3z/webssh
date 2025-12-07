@@ -14,7 +14,7 @@ iOS/iPad向けタッチフレンドリーなWebベースターミナル。tmux�
 ## インストール
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/webssh.git
+git clone https://github.com/shi3z/webssh.git
 cd webssh
 uv sync
 ```
