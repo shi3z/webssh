@@ -79,6 +79,24 @@
         .arrow-pad .btn:nth-child(3) { grid-column: 2; grid-row: 2; }
         .arrow-pad .btn:nth-child(4) { grid-column: 3; grid-row: 2; }
 
+        .arrow-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .page-keys {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .page-keys .btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            min-width: 44px;
+        }
+
         .keys-area {
             display: flex;
             gap: 8px;
@@ -116,16 +134,6 @@
         }
 
         .btn:active, .btn.active {
-            background: #e94560;
-            color: #16213e;
-        }
-
-        .btn.modifier {
-            background: #1a1a2e;
-            min-width: 60px;
-        }
-
-        .btn.modifier.active {
             background: #e94560;
             color: #16213e;
         }
@@ -358,35 +366,38 @@
 
         <div class="control-panel">
             <div class="control-main">
-                <div class="arrow-pad">
-                    <button class="btn arrow" id="upBtn">↑</button>
-                    <button class="btn arrow" id="leftBtn">←</button>
-                    <button class="btn arrow" id="downBtn">↓</button>
-                    <button class="btn arrow" id="rightBtn">→</button>
+                <div class="arrow-section">
+                    <div class="arrow-pad">
+                        <button class="btn arrow" id="upBtn">↑</button>
+                        <button class="btn arrow" id="leftBtn">←</button>
+                        <button class="btn arrow" id="downBtn">↓</button>
+                        <button class="btn arrow" id="rightBtn">→</button>
+                    </div>
+                    <div class="page-keys">
+                        <button class="btn" id="ctrlLeftBtn">^←</button>
+                        <button class="btn" id="ctrlRightBtn">^→</button>
+                    </div>
+                    <div class="page-keys">
+                        <button class="btn" id="pgupBtn">PgUp</button>
+                        <button class="btn" id="pgdnBtn">PgDn</button>
+                    </div>
                 </div>
                 <div class="other-keys">
                     <!-- iPhone: essential keys only -->
                     <div class="button-row iphone-essential">
                         <button class="btn" id="escBtn">Esc</button>
+                        <button class="btn" id="tabBtn">Tab</button>
                         <button class="btn wide" id="textInputBtn">Text</button>
+                        <button class="btn" id="delBtn">Del</button>
                         <button class="btn" id="bsBtn">BS</button>
                         <button class="btn iphone-only" id="moreBtn">More</button>
                     </div>
-                    <!-- Desktop: full keys -->
                     <div class="button-row iphone-hide">
-                        <button class="btn modifier" id="ctrlBtn">Ctrl</button>
-                        <button class="btn modifier" id="altBtn">Alt</button>
-                        <button class="btn" id="tabBtn">Tab</button>
-                        <button class="btn" id="delBtn">Del</button>
-                    </div>
-                    <div class="button-row iphone-hide">
-                        <button class="btn" id="homeBtn">Home</button>
-                        <button class="btn" id="endBtn">End</button>
-                        <button class="btn" id="pgupBtn">PgUp</button>
-                        <button class="btn" id="pgdnBtn">PgDn</button>
                         <button class="btn" id="ctrlCBtn">^C</button>
                         <button class="btn" id="ctrlDBtn">^D</button>
                         <button class="btn" id="ctrlZBtn">^Z</button>
+                        <button class="btn" id="ctrlOBtn">^O</button>
+                        <button class="btn" id="ctrlTBtn">^T</button>
                     </div>
                     <div class="button-row iphone-hide">
                         <button class="btn wide" id="tmuxBtn">tmux</button>
@@ -400,21 +411,13 @@
             <!-- iPhone: extra keys panel -->
             <div class="extra-panel" id="extraPanel">
                 <div class="button-row">
-                    <button class="btn modifier" id="ctrlBtn2">Ctrl</button>
-                    <button class="btn modifier" id="altBtn2">Alt</button>
-                    <button class="btn" id="tabBtn2">Tab</button>
-                    <button class="btn" id="delBtn2">Del</button>
-                </div>
-                <div class="button-row" style="margin-top: 6px;">
-                    <button class="btn" id="homeBtn2">Home</button>
-                    <button class="btn" id="endBtn2">End</button>
-                    <button class="btn" id="pgupBtn2">PgUp</button>
-                    <button class="btn" id="pgdnBtn2">PgDn</button>
-                </div>
-                <div class="button-row" style="margin-top: 6px;">
                     <button class="btn" id="ctrlCBtn2">^C</button>
                     <button class="btn" id="ctrlDBtn2">^D</button>
                     <button class="btn" id="ctrlZBtn2">^Z</button>
+                    <button class="btn" id="ctrlOBtn2">^O</button>
+                    <button class="btn" id="ctrlTBtn2">^T</button>
+                </div>
+                <div class="button-row" style="margin-top: 6px;">
                     <button class="btn wide" id="tmuxBtn2">tmux</button>
                 </div>
             </div>
@@ -433,9 +436,13 @@
                     <button class="btn" data-tmux="o">o (pane)</button>
                     <button class="btn" data-tmux="x">x (kill)</button>
                     <button class="btn" data-tmux="z">z (zoom)</button>
-                    <button class="btn" data-tmux="[">[ (copy)</button>
                     <button class="btn" data-tmux="s">s (sessions)</button>
                     <button class="btn" data-tmux="w">w (windows)</button>
+                </div>
+                <div class="section-label" style="margin-top: 8px;">Scroll mode</div>
+                <div class="button-row">
+                    <button class="btn" data-tmux="[">[ (scroll)</button>
+                    <button class="btn" id="tmuxQuitBtn">q (quit)</button>
                 </div>
             </div>
         </div>
@@ -570,61 +577,44 @@
             term.onData((data) => send(data));
         }
 
-        // Modifier states
-        let ctrlActive = false;
-        let altActive = false;
+        // Key repeat for arrow keys (1 second delay, then repeat)
+        let repeatTimer = null;
+        let repeatInterval = null;
+        const REPEAT_DELAY = 1000;  // 1 second before repeat starts
+        const REPEAT_RATE = 100;    // 100ms between repeats
 
-        const ctrlBtn = document.getElementById('ctrlBtn');
-        const altBtn = document.getElementById('altBtn');
-        const ctrlBtn2 = document.getElementById('ctrlBtn2');
-        const altBtn2 = document.getElementById('altBtn2');
-
-        function updateModifiers() {
-            if (ctrlBtn) ctrlBtn.classList.toggle('active', ctrlActive);
-            if (altBtn) altBtn.classList.toggle('active', altActive);
-            if (ctrlBtn2) ctrlBtn2.classList.toggle('active', ctrlActive);
-            if (altBtn2) altBtn2.classList.toggle('active', altActive);
-        }
-
-        function clearModifiers() {
-            ctrlActive = false;
-            altActive = false;
-            updateModifiers();
-        }
-
-        if (ctrlBtn) ctrlBtn.addEventListener('click', () => { ctrlActive = !ctrlActive; updateModifiers(); });
-        if (altBtn) altBtn.addEventListener('click', () => { altActive = !altActive; updateModifiers(); });
-        if (ctrlBtn2) ctrlBtn2.addEventListener('click', () => { ctrlActive = !ctrlActive; updateModifiers(); });
-        if (altBtn2) altBtn2.addEventListener('click', () => { altActive = !altActive; updateModifiers(); });
-
-        function sendKey(key, clearMods = true) {
-            let data = key;
-            if (ctrlActive && key.length === 1) {
-                const code = key.toUpperCase().charCodeAt(0);
-                if (code >= 64 && code <= 95) {
-                    data = String.fromCharCode(code - 64);
-                }
-            }
-            if (altActive) {
-                data = '\x1b' + data;
-            }
-            send(data);
-            if (clearMods) clearModifiers();
+        function setupRepeatableKey(btn, data) {
+            const startRepeat = () => {
+                send(data);
+                repeatTimer = setTimeout(() => {
+                    repeatInterval = setInterval(() => send(data), REPEAT_RATE);
+                }, REPEAT_DELAY);
+            };
+            const stopRepeat = () => {
+                if (repeatTimer) { clearTimeout(repeatTimer); repeatTimer = null; }
+                if (repeatInterval) { clearInterval(repeatInterval); repeatInterval = null; }
+            };
+            btn.addEventListener('mousedown', startRepeat);
+            btn.addEventListener('mouseup', stopRepeat);
+            btn.addEventListener('mouseleave', stopRepeat);
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); startRepeat(); });
+            btn.addEventListener('touchend', stopRepeat);
+            btn.addEventListener('touchcancel', stopRepeat);
         }
 
         // Essential keys (both modes)
         document.getElementById('escBtn').addEventListener('click', () => send('\x1b'));
         document.getElementById('enterBtn').addEventListener('click', () => send('\r'));
-        document.getElementById('upBtn').addEventListener('click', () => send('\x1b[A'));
-        document.getElementById('downBtn').addEventListener('click', () => send('\x1b[B'));
-        document.getElementById('rightBtn').addEventListener('click', () => send('\x1b[C'));
-        document.getElementById('leftBtn').addEventListener('click', () => send('\x1b[D'));
         document.getElementById('bsBtn').addEventListener('click', () => send('\x7f'));
+
+        // Arrow keys with repeat
+        setupRepeatableKey(document.getElementById('upBtn'), '\x1b[A');
+        setupRepeatableKey(document.getElementById('downBtn'), '\x1b[B');
+        setupRepeatableKey(document.getElementById('rightBtn'), '\x1b[C');
+        setupRepeatableKey(document.getElementById('leftBtn'), '\x1b[D');
 
         // Desktop keys
         const tabBtn = document.getElementById('tabBtn');
-        const homeBtn = document.getElementById('homeBtn');
-        const endBtn = document.getElementById('endBtn');
         const pgupBtn = document.getElementById('pgupBtn');
         const pgdnBtn = document.getElementById('pgdnBtn');
         const delBtn = document.getElementById('delBtn');
@@ -634,38 +624,43 @@
         const lsBtn = document.getElementById('lsBtn');
         const cdBtn = document.getElementById('cdBtn');
 
-        if (tabBtn) tabBtn.addEventListener('click', () => sendKey('\t'));
-        if (homeBtn) homeBtn.addEventListener('click', () => send('\x1b[H'));
-        if (endBtn) endBtn.addEventListener('click', () => send('\x1b[F'));
+        if (tabBtn) tabBtn.addEventListener('click', () => send('\t'));
         if (pgupBtn) pgupBtn.addEventListener('click', () => send('\x1b[5~'));
         if (pgdnBtn) pgdnBtn.addEventListener('click', () => send('\x1b[6~'));
+
+        // Ctrl+Arrow keys (word jump)
+        const ctrlLeftBtn = document.getElementById('ctrlLeftBtn');
+        const ctrlRightBtn = document.getElementById('ctrlRightBtn');
+        if (ctrlLeftBtn) ctrlLeftBtn.addEventListener('click', () => send('\x1b[1;5D'));
+        if (ctrlRightBtn) ctrlRightBtn.addEventListener('click', () => send('\x1b[1;5C'));
         if (delBtn) delBtn.addEventListener('click', () => send('\x1b[3~'));
         if (ctrlCBtn) ctrlCBtn.addEventListener('click', () => send('\x03'));
         if (ctrlDBtn) ctrlDBtn.addEventListener('click', () => send('\x04'));
         if (ctrlZBtn) ctrlZBtn.addEventListener('click', () => send('\x1a'));
+
+        // Claude Code keys
+        const ctrlOBtn = document.getElementById('ctrlOBtn');
+        const ctrlTBtn = document.getElementById('ctrlTBtn');
+        if (ctrlOBtn) ctrlOBtn.addEventListener('click', () => send('\x0f'));
+        if (ctrlTBtn) ctrlTBtn.addEventListener('click', () => send('\x14'));
+
         if (lsBtn) lsBtn.addEventListener('click', () => send('ls\n'));
         if (cdBtn) cdBtn.addEventListener('click', () => send('cd ..\n'));
 
         // iPhone extra panel keys
-        const tabBtn2 = document.getElementById('tabBtn2');
-        const homeBtn2 = document.getElementById('homeBtn2');
-        const endBtn2 = document.getElementById('endBtn2');
-        const pgupBtn2 = document.getElementById('pgupBtn2');
-        const pgdnBtn2 = document.getElementById('pgdnBtn2');
-        const delBtn2 = document.getElementById('delBtn2');
         const ctrlCBtn2 = document.getElementById('ctrlCBtn2');
         const ctrlDBtn2 = document.getElementById('ctrlDBtn2');
         const ctrlZBtn2 = document.getElementById('ctrlZBtn2');
 
-        if (tabBtn2) tabBtn2.addEventListener('click', () => sendKey('\t'));
-        if (homeBtn2) homeBtn2.addEventListener('click', () => send('\x1b[H'));
-        if (endBtn2) endBtn2.addEventListener('click', () => send('\x1b[F'));
-        if (pgupBtn2) pgupBtn2.addEventListener('click', () => send('\x1b[5~'));
-        if (pgdnBtn2) pgdnBtn2.addEventListener('click', () => send('\x1b[6~'));
-        if (delBtn2) delBtn2.addEventListener('click', () => send('\x1b[3~'));
         if (ctrlCBtn2) ctrlCBtn2.addEventListener('click', () => send('\x03'));
         if (ctrlDBtn2) ctrlDBtn2.addEventListener('click', () => send('\x04'));
         if (ctrlZBtn2) ctrlZBtn2.addEventListener('click', () => send('\x1a'));
+
+        // Claude Code keys (iPhone)
+        const ctrlOBtn2 = document.getElementById('ctrlOBtn2');
+        const ctrlTBtn2 = document.getElementById('ctrlTBtn2');
+        if (ctrlOBtn2) ctrlOBtn2.addEventListener('click', () => send('\x0f'));
+        if (ctrlTBtn2) ctrlTBtn2.addEventListener('click', () => send('\x14'));
 
         // More button for iPhone
         const moreBtn = document.getElementById('moreBtn');
@@ -688,6 +683,10 @@
         document.querySelectorAll('[data-tmux]').forEach(btn => {
             btn.addEventListener('click', () => send('\x02' + btn.dataset.tmux));
         });
+
+        // tmux scroll mode quit (sends 'q' without Ctrl+B prefix)
+        const tmuxQuitBtn = document.getElementById('tmuxQuitBtn');
+        if (tmuxQuitBtn) tmuxQuitBtn.addEventListener('click', () => send('q'));
 
         const textModal = document.getElementById('textModal');
         const textInput = document.getElementById('textInput');
