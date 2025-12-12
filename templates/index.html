@@ -258,6 +258,45 @@
             color: #fff;
         }
 
+        .ctrl-keyboard {
+            max-width: 400px;
+        }
+
+        .ctrl-keyboard h3 {
+            text-align: center;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .kbd-btn {
+            background: #0f3460;
+            color: #e94560;
+            border: 1px solid #e94560;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 36px;
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+
+        .kbd-btn:active {
+            background: #e94560;
+            color: #16213e;
+        }
+
+        .kbd-btn.wide {
+            padding: 12px 24px;
+            min-width: 100px;
+        }
+
         .quick-cmd {
             background: #1a1a2e;
             font-size: 12px;
@@ -387,15 +426,18 @@
                     <div class="button-row iphone-essential">
                         <button class="btn" id="escBtn">Esc</button>
                         <button class="btn" id="tabBtn">Tab</button>
+                        <button class="btn" id="shiftTabBtn">S-Tab</button>
                         <button class="btn wide" id="textInputBtn">Text</button>
                         <button class="btn" id="delBtn">Del</button>
                         <button class="btn" id="bsBtn">BS</button>
                         <button class="btn iphone-only" id="moreBtn">More</button>
                     </div>
                     <div class="button-row iphone-hide">
+                        <button class="btn" id="ctrlKeyBtn">Ctrl</button>
                         <button class="btn" id="ctrlCBtn">^C</button>
                         <button class="btn" id="ctrlDBtn">^D</button>
                         <button class="btn" id="ctrlZBtn">^Z</button>
+                        <button class="btn" id="ctrlXBtn">^X</button>
                         <button class="btn" id="ctrlOBtn">^O</button>
                         <button class="btn" id="ctrlTBtn">^T</button>
                     </div>
@@ -411,9 +453,11 @@
             <!-- iPhone: extra keys panel -->
             <div class="extra-panel" id="extraPanel">
                 <div class="button-row">
+                    <button class="btn" id="ctrlKeyBtn2">Ctrl</button>
                     <button class="btn" id="ctrlCBtn2">^C</button>
                     <button class="btn" id="ctrlDBtn2">^D</button>
                     <button class="btn" id="ctrlZBtn2">^Z</button>
+                    <button class="btn" id="ctrlXBtn2">^X</button>
                     <button class="btn" id="ctrlOBtn2">^O</button>
                     <button class="btn" id="ctrlTBtn2">^T</button>
                 </div>
@@ -459,8 +503,50 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="ctrlModal">
+        <div class="modal ctrl-keyboard">
+            <h3>Ctrl + ?</h3>
+            <div class="keyboard-row">
+                <button class="kbd-btn" data-ctrl="Q">Q</button>
+                <button class="kbd-btn" data-ctrl="W">W</button>
+                <button class="kbd-btn" data-ctrl="E">E</button>
+                <button class="kbd-btn" data-ctrl="R">R</button>
+                <button class="kbd-btn" data-ctrl="T">T</button>
+                <button class="kbd-btn" data-ctrl="Y">Y</button>
+                <button class="kbd-btn" data-ctrl="U">U</button>
+                <button class="kbd-btn" data-ctrl="I">I</button>
+                <button class="kbd-btn" data-ctrl="O">O</button>
+                <button class="kbd-btn" data-ctrl="P">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="kbd-btn" data-ctrl="A">A</button>
+                <button class="kbd-btn" data-ctrl="S">S</button>
+                <button class="kbd-btn" data-ctrl="D">D</button>
+                <button class="kbd-btn" data-ctrl="F">F</button>
+                <button class="kbd-btn" data-ctrl="G">G</button>
+                <button class="kbd-btn" data-ctrl="H">H</button>
+                <button class="kbd-btn" data-ctrl="J">J</button>
+                <button class="kbd-btn" data-ctrl="K">K</button>
+                <button class="kbd-btn" data-ctrl="L">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="kbd-btn" data-ctrl="Z">Z</button>
+                <button class="kbd-btn" data-ctrl="X">X</button>
+                <button class="kbd-btn" data-ctrl="C">C</button>
+                <button class="kbd-btn" data-ctrl="V">V</button>
+                <button class="kbd-btn" data-ctrl="B">B</button>
+                <button class="kbd-btn" data-ctrl="N">N</button>
+                <button class="kbd-btn" data-ctrl="M">M</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="kbd-btn wide" id="ctrlModalCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links@0.11.0/lib/addon-web-links.min.js"></script>
     <script>
         const debugEl = document.getElementById('debug');
         function log(msg) {
@@ -492,6 +578,12 @@
             log('Creating FitAddon...');
             fitAddon = new FitAddon.FitAddon();
             term.loadAddon(fitAddon);
+
+            log('Creating WebLinksAddon...');
+            const webLinksAddon = new WebLinksAddon.WebLinksAddon((event, uri) => {
+                window.open(uri, '_blank');
+            });
+            term.loadAddon(webLinksAddon);
 
             log('Opening terminal...');
             term.open(document.getElementById('terminal'));
@@ -574,7 +666,17 @@
         }
 
         if (term) {
-            term.onData((data) => send(data));
+            term.onData((data) => {
+                // Filter out terminal response sequences that shouldn't be sent back to PTY
+                // DA1 response: ESC [ ? ... c
+                // DA2 response: ESC [ > ... c  (e.g., \x1b[>0;276;0c)
+                // DSR response (cursor position): ESC [ ... R
+                // Also filter incomplete responses where ESC may have been dropped
+                if (/^\x1b\[[?>]?[0-9;]*[cR]$/.test(data) || /^[?>][0-9;]*c$/.test(data)) {
+                    return; // Don't send terminal responses back to PTY
+                }
+                send(data);
+            });
         }
 
         // Key repeat for arrow keys (1 second delay, then repeat)
@@ -625,6 +727,10 @@
         const cdBtn = document.getElementById('cdBtn');
 
         if (tabBtn) tabBtn.addEventListener('click', () => send('\t'));
+
+        // Shift+Tab
+        const shiftTabBtn = document.getElementById('shiftTabBtn');
+        if (shiftTabBtn) shiftTabBtn.addEventListener('click', () => send('\x1b[Z'));
         if (pgupBtn) pgupBtn.addEventListener('click', () => send('\x1b[5~'));
         if (pgdnBtn) pgdnBtn.addEventListener('click', () => send('\x1b[6~'));
 
@@ -637,6 +743,10 @@
         if (ctrlCBtn) ctrlCBtn.addEventListener('click', () => send('\x03'));
         if (ctrlDBtn) ctrlDBtn.addEventListener('click', () => send('\x04'));
         if (ctrlZBtn) ctrlZBtn.addEventListener('click', () => send('\x1a'));
+
+        // Ctrl+X
+        const ctrlXBtn = document.getElementById('ctrlXBtn');
+        if (ctrlXBtn) ctrlXBtn.addEventListener('click', () => send('\x18'));
 
         // Claude Code keys
         const ctrlOBtn = document.getElementById('ctrlOBtn');
@@ -655,6 +765,10 @@
         if (ctrlCBtn2) ctrlCBtn2.addEventListener('click', () => send('\x03'));
         if (ctrlDBtn2) ctrlDBtn2.addEventListener('click', () => send('\x04'));
         if (ctrlZBtn2) ctrlZBtn2.addEventListener('click', () => send('\x1a'));
+
+        // Ctrl+X (iPhone)
+        const ctrlXBtn2 = document.getElementById('ctrlXBtn2');
+        if (ctrlXBtn2) ctrlXBtn2.addEventListener('click', () => send('\x18'));
 
         // Claude Code keys (iPhone)
         const ctrlOBtn2 = document.getElementById('ctrlOBtn2');
@@ -693,6 +807,37 @@
         document.getElementById('textInputBtn').addEventListener('click', () => {
             textModal.classList.add('visible');
             textInput.focus();
+        });
+
+        // Ctrl keyboard modal
+        const ctrlModal = document.getElementById('ctrlModal');
+        const ctrlKeyBtn = document.getElementById('ctrlKeyBtn');
+        const ctrlKeyBtn2 = document.getElementById('ctrlKeyBtn2');
+        if (ctrlKeyBtn) {
+            ctrlKeyBtn.addEventListener('click', () => {
+                ctrlModal.classList.add('visible');
+            });
+        }
+        if (ctrlKeyBtn2) {
+            ctrlKeyBtn2.addEventListener('click', () => {
+                ctrlModal.classList.add('visible');
+            });
+        }
+        document.getElementById('ctrlModalCancel').addEventListener('click', () => {
+            ctrlModal.classList.remove('visible');
+        });
+        document.querySelectorAll('[data-ctrl]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.ctrl;
+                const code = key.charCodeAt(0) - 64;  // A=1, B=2, ... Z=26
+                send(String.fromCharCode(code));
+                ctrlModal.classList.remove('visible');
+            });
+        });
+        ctrlModal.addEventListener('click', (e) => {
+            if (e.target === ctrlModal) {
+                ctrlModal.classList.remove('visible');
+            }
         });
         document.getElementById('cancelText').addEventListener('click', () => {
             textModal.classList.remove('visible');
