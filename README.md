@@ -100,7 +100,7 @@ Expand with the `tmux` button:
 - **[**: Copy mode
 
 ### Text Input
-Click the `Text` button to open an input field for pasting long text or CJK (Japanese/Chinese/Korean) characters.
+Click the `Text` button to open a modal for pasting long text or CJK characters.
 
 ## Requirements
 
